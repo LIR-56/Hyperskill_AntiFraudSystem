@@ -1,0 +1,7 @@
+package antifraud;
+
+public enum TransactionType {
+    ALLOWED,
+    MANUAL_PROCESSING,
+    PROHIBITED
+}
