@@ -5,7 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface UserRepository extends CrudRepository<User, String> {
 
-    @Transactional
     User findByUsername(String username);
     @Transactional
     void deleteByUsername(String username);

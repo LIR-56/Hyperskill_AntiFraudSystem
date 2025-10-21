@@ -1,6 +1,5 @@
 package antifraud.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -30,13 +29,20 @@ public class User {
     @Transient
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Nullable
-    @NotBlank
+    //@NotBlank // checking manually
     private String password;
 
     @Column(name = "password_hash")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Nullable
     private String passwordHash;
+
+    @Column(name = "role")
+    private UserRole role;
+
+    @Column(name = "is_locked")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private boolean isLocked;
 
     //constructor for JPARepository
     public User() {
@@ -83,5 +89,22 @@ public class User {
     @Nullable
     public String getPassword() {
         return password;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
     }
 }
