@@ -1,11 +1,6 @@
-package antifraud;
+package antifraud.user;
 
-import antifraud.ex.WrongTransactionException;
-import antifraud.exceptions.EmptyPasswordException;
-import antifraud.exceptions.UserNotFoundException;
-import antifraud.user.User;
-import antifraud.user.UserRole;
-import antifraud.user.UserService;
+import antifraud.exceptions.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
@@ -20,30 +15,12 @@ import static org.springframework.http.HttpStatus.*;
 
 
 @RestController
-public class Controller {
-    public static StatusWrapper allowed = new StatusWrapper(TransactionType.ALLOWED);
-    public static StatusWrapper manualProcessing = new StatusWrapper(TransactionType.MANUAL_PROCESSING);
-    public static StatusWrapper prohibited = new StatusWrapper(TransactionType.PROHIBITED);
+public class UserController {
 
     private final UserService userService;
 
-    public Controller(UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-    }
-
-    @PostMapping(path = {"/api/antifraud/transaction", "/api/antifraud/transaction/"})
-    public StatusWrapper checkTransaction(@RequestBody InputWrapper num) {
-        if (num.amount > 0) {
-            if (num.amount() <= 200) {
-                return allowed;
-            } else if (num.amount <= 1500) {
-                return manualProcessing;
-            } else {
-                return prohibited;
-            }
-        } else {
-            throw new WrongTransactionException();
-        }
     }
 
     @PostMapping("/api/auth/user")
@@ -62,7 +39,7 @@ public class Controller {
     @DeleteMapping("/api/auth/user/{username}")
     public Map<String, String> deleteUser(@PathVariable String username) {
         if (!userService.deleteUser(username)) {
-            throw new ResponseStatusException(NOT_FOUND);
+            throw new UserNotFoundException();
         }
         return Map.of("username", username,
                 "status", "Deleted successfully!");
@@ -71,14 +48,14 @@ public class Controller {
     @PutMapping("/api/auth/role")
     public User updateUser(@RequestBody UserWithRole user) {
         if (user.role != UserRole.MERCHANT && user.role != UserRole.SUPPORT) {
-            throw new ResponseStatusException(BAD_REQUEST);
+            throw new WrongUserRoleException();
         }
         var userOld = userService.getUser(user.username());
         if (userOld == null) {
-            throw new ResponseStatusException(NOT_FOUND);
+            throw new UserNotFoundException();
         }
         if (userOld.getRole() == user.role()) {
-            throw new ResponseStatusException(CONFLICT);
+            throw new SameUserRoleException();
         }
         userService.updateRoleForUser(userOld, user.role());
         return userService.getUser(user.username);
@@ -91,7 +68,7 @@ public class Controller {
             throw new UserNotFoundException();
         }
         if (oldUser.getRole() == UserRole.ADMINISTRATOR) {
-            throw new ResponseStatusException(BAD_REQUEST);
+            throw new AttemptToChangeAdministratorRoleException();
         }
         String result;
         if (user.operation() == LockOperation.LOCK) {
@@ -109,10 +86,6 @@ public class Controller {
 
     public record UserWithLocking(@NotBlank String username, LockOperation operation) { }
     public record UserWithRole(String username, UserRole role) { }
-
-    public record InputWrapper(long amount) { }
-
-    public record StatusWrapper(TransactionType result) { }
 
     public enum LockOperation {
         LOCK,

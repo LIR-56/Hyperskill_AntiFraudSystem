@@ -1,4 +1,6 @@
 buildscript {
+    apply plugin: 'hyperskill'
+
     repositories {
         mavenCentral()
     }

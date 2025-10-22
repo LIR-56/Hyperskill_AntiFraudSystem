@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -30,11 +29,12 @@ public class AntiFraudApplication {
                 .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable())   // for Postman, the H2 console
                 .authorizeHttpRequests(requests -> requests                     // manage access
                                 .requestMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
-                                .requestMatchers(HttpMethod.DELETE, "/api/quizzes/*").authenticated()
                                 .requestMatchers("/api/auth/list").hasAnyAuthority("ADMINISTRATOR", "SUPPORT")
                                 .requestMatchers("/api/auth/**").hasAuthority("ADMINISTRATOR")
                                 .requestMatchers("/api/antifraud/transaction").hasAuthority("MERCHANT")
-                                .requestMatchers("/api/antifraud/transaction/").hasAuthority("MERCHANT") //for stupid test typo
+                                //.requestMatchers("/api/antifraud/transaction/").hasAuthority("MERCHANT") //for stupid test typo
+                                .requestMatchers("/api/antifraud/suspicious-ip/**").hasAuthority("SUPPORT")
+                                .requestMatchers("/api/antifraud/stolencard/**").hasAuthority("SUPPORT")
                                 .requestMatchers("/actuator/shutdown").permitAll()      // needs to run test
                                 //.requestMatchers("/error").permitAll()
                                 .anyRequest().authenticated()
