@@ -19,7 +19,6 @@ public class TransactionController {
 
     public static StatusWrapper allowed = new StatusWrapper(TransactionType.ALLOWED, "none");
     public static StatusWrapper manualProcessing = new StatusWrapper(TransactionType.MANUAL_PROCESSING, "amount");
-    public static StatusWrapper prohibited = new StatusWrapper(TransactionType.PROHIBITED, "");
 
     private final SuspiciousIPService suspiciousIPService;
     private final StolenCardService stolenCardService;
