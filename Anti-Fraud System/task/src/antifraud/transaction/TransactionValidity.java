@@ -1,6 +1,6 @@
 package antifraud.transaction;
 
-public enum TransactionType {
+public enum TransactionValidity {
     ALLOWED,
     MANUAL_PROCESSING,
     PROHIBITED

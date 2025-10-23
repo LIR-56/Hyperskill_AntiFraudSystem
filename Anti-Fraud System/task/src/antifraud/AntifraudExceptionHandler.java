@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class AntifraudExceptionHandler {
 
     @ExceptionHandler({DuplicateUserException.class, DuplicateIpException.class,
-            DuplicateStolenCardException.class, SameUserRoleException.class})
+            DuplicateStolenCardException.class, SameUserRoleException.class,
+            FeedbackAlreadyGivenException.class})
     public ResponseEntity<String> duplicateException() {
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
@@ -24,8 +25,14 @@ public class AntifraudExceptionHandler {
     }
 
     @ExceptionHandler({UserNotFoundException.class, SuspiciousIPNotFoundException.class,
-            StolenCardNotFoundException.class})
+            StolenCardNotFoundException.class, TransactionNotFoundException.class,
+            TransactionsForCreditCardNotFound.class})
     public ResponseEntity<String> notFoundException() {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(IncorrectFeedbackException.class)
+    public ResponseEntity<String> wrongFeedbackException() {
+        return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }

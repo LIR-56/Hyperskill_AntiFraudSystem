@@ -31,10 +31,12 @@ public class AntiFraudApplication {
                                 .requestMatchers(HttpMethod.POST, "/api/auth/user").permitAll()
                                 .requestMatchers("/api/auth/list").hasAnyAuthority("ADMINISTRATOR", "SUPPORT")
                                 .requestMatchers("/api/auth/**").hasAuthority("ADMINISTRATOR")
-                                .requestMatchers("/api/antifraud/transaction").hasAuthority("MERCHANT")
+                                .requestMatchers(HttpMethod.POST,"/api/antifraud/transaction").hasAuthority("MERCHANT")
                                 //.requestMatchers("/api/antifraud/transaction/").hasAuthority("MERCHANT") //for stupid test typo
                                 .requestMatchers("/api/antifraud/suspicious-ip/**").hasAuthority("SUPPORT")
                                 .requestMatchers("/api/antifraud/stolencard/**").hasAuthority("SUPPORT")
+                                .requestMatchers("/api/antifraud/history/**").hasAuthority("SUPPORT")
+                                .requestMatchers(HttpMethod.PUT, "/api/antifraud/transaction/**").hasAuthority("SUPPORT")
                                 .requestMatchers("/actuator/shutdown").permitAll()      // needs to run test
                                 //.requestMatchers("/error").permitAll()
                                 .anyRequest().authenticated()

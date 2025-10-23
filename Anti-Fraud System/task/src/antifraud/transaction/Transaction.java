@@ -1,5 +1,6 @@
 package antifraud.transaction;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -16,7 +17,7 @@ public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY, value = "transactionId")
     @Column(name = "transaction_id")
     private long id;
 
@@ -39,7 +40,15 @@ public class Transaction {
 
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-ddThh:mm:ss")
+    @Column(name = "transaction_datetime")
     LocalDateTime date;
+
+    @Column(name = "transaction_validity")
+    @JsonProperty(value = "result", access = JsonProperty.Access.READ_ONLY)
+    TransactionValidity validity;
+
+    @Column(name = "transaction_feedback")
+    TransactionValidity feedback;
 
     public long getAmount() {
         return amount;
@@ -87,5 +96,26 @@ public class Transaction {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public TransactionValidity getValidity() {
+        return validity;
+    }
+
+    public void setValidity(TransactionValidity validity) {
+        this.validity = validity;
+    }
+
+    public TransactionValidity getFeedback() {
+        return feedback;
+    }
+
+    public void setFeedback(TransactionValidity feedback) {
+        this.feedback = feedback;
+    }
+
+    @JsonGetter("feedback")
+    public String getFeedbackWithoutNull() {
+        return feedback == null ? "" : feedback.toString();
     }
 }
