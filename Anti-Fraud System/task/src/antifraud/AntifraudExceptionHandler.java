@@ -1,6 +1,5 @@
 package antifraud;
 
-import antifraud.ex.WrongTransactionException;
 import antifraud.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +18,7 @@ public class AntifraudExceptionHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class, WrongIpFormatException.class,
             WrongCardNumberException.class, EmptyPasswordException.class,
-            WrongTransactionException.class, WrongUserRoleException.class,
-            AttemptToChangeAdministratorRoleException.class})
+             WrongUserRoleException.class, AttemptToChangeAdministratorRoleException.class})
     public ResponseEntity<String> validationException() {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
